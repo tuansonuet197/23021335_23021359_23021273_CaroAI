@@ -1,4 +1,4 @@
-# Đồ án Caro AI (Nhóm 3 thành viên)
+# Bài Tập Lớn Giữa Kì Caro AI (Nhóm 3 thành viên)
 
 ## Thành viên
 - 23021335 - Nguyễn Tuấn Sơn  
