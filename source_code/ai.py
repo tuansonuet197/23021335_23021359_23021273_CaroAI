@@ -1,65 +1,105 @@
 import time
-from evaluate import evaluate_state
+from evaluate import Evaluator
 
 class AI:
     def __init__(self):
         self.states_evaluated = 0
+        self.ai_player = 2
+        self.human_player = 1
 
-    def get_best_move(self, board, max_depth, use_alpha_beta=True):
+    def get_best_move(self, board, max_depth, use_alpha_beta=True, ai_player=2):
         self.states_evaluated = 0
+        self.ai_player = ai_player
+        self.human_player = 1 if ai_player == 2 else 2
+        
         start_time = time.time()
         
-        score, move = self.alpha_beta(board, max_depth, -float('inf'), float('inf'), True)
-        
+        if use_alpha_beta:
+            score, move = self.alpha_beta_search(board, max_depth, -float('inf'), float('inf'), True)
+        else:
+            score, move = self.minimax_search(board, max_depth, True)
+            
         execution_time = time.time() - start_time
         return move, score, self.states_evaluated, execution_time
 
-    def alpha_beta(self, board, depth, alpha, beta, is_maximizing):
+    def minimax_search(self, board, depth, is_maximizing):
         self.states_evaluated += 1
         winner = board.check_winner(win_count=4)
-        if winner is not None or depth == 0:
-            return evaluate_state(board), None
+        if winner is not None:
+            if winner == self.ai_player: return 100000 + depth, None
+            if winner == self.human_player: return -100000 - depth, None
+            return 0, None
+        if depth == 0:
+            return Evaluator.evaluate_state(board, self.ai_player), None
 
-        valid_moves = board.get_valid_moves(search_radius=1)
+        valid_moves = board.get_valid_moves(search_radius=2)
         if not valid_moves:
-            return evaluate_state(board), None
+            return Evaluator.evaluate_state(board, self.ai_player), None
 
-        # SẮP XẾP NƯỚC ĐI - Ưu tiên các nước gần trung tâm
-        move_scores = []
-        center = board.size // 2
-        for r, c in valid_moves:
-            score = (center - abs(r - center) - abs(c - center))
-            move_scores.append(((r, c), score))
-            
-        move_scores.sort(key=lambda x: x[1], reverse=True)
-        # Chỉ lấy top 8 nước đi để đảm bảo tốc độ
-        top_moves = [m[0] for m in move_scores[:8]]
+        # Sắp xếp nước đi để đưa những ô nguy hiểm lên đầu
+        valid_moves.sort(key=lambda m: Evaluator.score_move_quick(board, m[0], m[1], self.ai_player if is_maximizing else self.human_player), reverse=True)
 
-        best_move = top_moves[0] if top_moves else None
-
+        best_move = valid_moves[0]
         if is_maximizing:
-            best_score = -float('inf')
-            for r, c in top_moves:
-                board.make_move(r, c, 2)
-                score, _ = self.alpha_beta(board, depth - 1, alpha, beta, False)
-                board.undo_move(r, c, 2)
-                
-                if score > best_score:
-                    best_score = score
+            max_val = -float('inf')
+            for r, c in valid_moves[:12]: # Minimax thuần túy rất chậm nên giới hạn ít nước đi
+                board.make_move(r, c, self.ai_player)
+                val, _ = self.minimax_search(board, depth - 1, False)
+                board.undo_move(r, c, self.ai_player)
+                if val > max_val:
+                    max_val = val
                     best_move = (r, c)
-                alpha = max(alpha, score)
-                if beta <= alpha: break
+            return max_val, best_move
         else:
-            best_score = float('inf')
-            for r, c in top_moves:
-                board.make_move(r, c, 1)
-                score, _ = self.alpha_beta(board, depth - 1, alpha, beta, True)
-                board.undo_move(r, c, 1)
-                
-                if score < best_score:
-                    best_score = score
+            min_val = float('inf')
+            for r, c in valid_moves[:12]:
+                board.make_move(r, c, self.human_player)
+                val, _ = self.minimax_search(board, depth - 1, True)
+                board.undo_move(r, c, self.human_player)
+                if val < min_val:
+                    min_val = val
                     best_move = (r, c)
-                beta = min(beta, score)
-                if beta <= alpha: break
+            return min_val, best_move
 
-        return best_score, best_move
+    def alpha_beta_search(self, board, depth, alpha, beta, is_maximizing):
+        self.states_evaluated += 1
+        winner = board.check_winner(win_count=4)
+        if winner is not None:
+            if winner == self.ai_player: return 100000 + depth, None
+            if winner == self.human_player: return -100000 - depth, None
+            return 0, None
+        if depth == 0:
+            return Evaluator.evaluate_state(board, self.ai_player), None
+
+        valid_moves = board.get_valid_moves(search_radius=2)
+        if not valid_moves:
+            return Evaluator.evaluate_state(board, self.ai_player), None
+
+        # Sắp xếp nước đi thông minh
+        valid_moves.sort(key=lambda m: Evaluator.score_move_quick(board, m[0], m[1], self.ai_player if is_maximizing else self.human_player), reverse=True)
+
+        best_move = valid_moves[0]
+        if is_maximizing:
+            max_val = -float('inf')
+            for r, c in valid_moves[:25]: # Alpha-Beta có thể duyệt tới 25 nước đi
+                board.make_move(r, c, self.ai_player)
+                val, _ = self.alpha_beta_search(board, depth - 1, alpha, beta, False)
+                board.undo_move(r, c, self.ai_player)
+                if val > max_val:
+                    max_val = val
+                    best_move = (r, c)
+                alpha = max(alpha, val)
+                if beta <= alpha: break
+            return max_val, best_move
+        else:
+            min_val = float('inf')
+            for r, c in valid_moves[:25]:
+                board.make_move(r, c, self.human_player)
+                val, _ = self.alpha_beta_search(board, depth - 1, alpha, beta, True)
+                board.undo_move(r, c, self.human_player)
+                if val < min_val:
+                    min_val = val
+                    best_move = (r, c)
+                beta = min(beta, val)
+                if beta <= alpha: break
+            return min_val, best_move
