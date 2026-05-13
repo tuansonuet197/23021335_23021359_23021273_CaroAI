@@ -1,9 +1,9 @@
 # Đồ án Caro AI (Nhóm 3 thành viên)
 
 ## Thành viên
-- 23021335
-- [MSSV 2]
-- [MSSV 3]
+- 23021335 - Nguyễn Tuấn Sơn  
+- 23021359 - Nguyễn Văn Thắng
+- 23021273 - Vũ Hữu Hoạt
 
 ## Giới thiệu
 Chương trình chơi cờ Caro AI áp dụng thuật toán Minimax và Alpha-Beta Pruning.
