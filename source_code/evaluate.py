@@ -30,15 +30,15 @@ class Evaluator:
         line_score = 0
         length = len(line)
         
-        # Cửa sổ 4 ô để phát hiện thắng thua ngay lập tức
         for i in range(length - 3):
             window4 = line[i:i+4]
             p4 = window4.count(p)
             o4 = window4.count(o)
+            
+            # Ưu tiên tuyệt đối thắng/thua ngay lập tức
             if p4 == 4: line_score += 100000
             elif o4 == 4: line_score -= 100000
             
-        # Cửa sổ 5 ô để phát hiện thế trận Live 2, Live 3 (Quan trọng cho chặn chéo)
         for i in range(length - 4):
             window5 = line[i:i+5]
             pc = window5.count(p)
@@ -46,43 +46,52 @@ class Evaluator:
             
             if pc > 0 and oc > 0: continue
             
-            # Ưu tiên phòng thủ cực cao cho các thế cờ "mở"
+            # Phân tích các thế cờ "mở" (Live) - CỰC KỲ QUAN TRỌNG
             if oc == 3:
-                if window5[0] == 0 and window5[4] == 0: line_score -= 20000 # Live 3 của người
-                else: line_score -= 10000 # Dead 3
+                # Thế cờ người chơi có 3 quân mở 2 đầu (hoặc 1 đầu nhưng luật 4 quân là thắng)
+                if window5[0] == 0 and window5[4] == 0:
+                    line_score -= 30000 # Rất nguy hiểm (Live 3)
+                else:
+                    line_score -= 15000 # Dead 3
             elif pc == 3:
-                if window5[0] == 0 and window5[4] == 0: line_score += 8000 # Live 3 của máy
-                else: line_score += 5000
+                if window5[0] == 0 and window5[4] == 0:
+                    line_score += 20000
+                else:
+                    line_score += 10000
             elif oc == 2:
-                if window5[0] == 0 and window5[4] == 0: line_score -= 2000 # Live 2 của người (Phải chặn sớm!)
-                else: line_score -= 500
+                # Chặn sớm bộ 2 của người chơi
+                if window5[0] == 0 and window5[1] == 0 and window5[4] == 0:
+                    line_score -= 5000 # Live 2 thoáng
+                else:
+                    line_score -= 2000
             elif pc == 2:
-                line_score += 100
+                line_score += 500
                 
         return line_score
 
     @staticmethod
     def score_move_quick(board, r, c, p):
         """
-        Đánh giá nhanh để sắp xếp nước đi. 
-        Cải tiến: Cộng điểm lớn cho việc chặn đứng các chuỗi quân của địch.
+        Sắp xếp nước đi (Move Ordering) cực mạnh.
+        Ưu tiên các ô tạo ra hoặc chặn đứng các chuỗi liên tiếp.
         """
         score = 0
         size = board.size
         grid = board.grid
         o = 1 if p == 2 else 2
         
-        # Gần tâm
+        # 1. Ưu tiên gần tâm bàn cờ
         center = size // 2
         score += (center - abs(r - center) - abs(c - center))
         
-        # Xét 4 hướng để tìm quân địch xung quanh
+        # 2. Ưu tiên các ô có quân xung quanh (bán kính 1)
         directions = [(0, 1), (1, 0), (1, 1), (1, -1)]
         for dr, dc in directions:
             for step in [1, -1]:
                 nr, nc = r + dr * step, c + dc * step
                 if 0 <= nr < size and 0 <= nc < size:
                     val = grid[nr][nc]
-                    if val == o: score += 50 # Ưu tiên chặn địch
-                    elif val == p: score += 30 # Ưu tiên nối quân mình
+                    if val == o: score += 100 # Chặn địch là ưu tiên 1
+                    elif val == p: score += 80 # Nối quân mình là ưu tiên 2
+                    
         return score

@@ -56,7 +56,7 @@ def run_benchmark():
         ("Nhiều nước đi", create_board_5())
     ]
     
-    depths = [1, 2, 3] # Chạy thử ở 3 độ sâu khác nhau
+    depths = [1, 2, 3, 4] # Chạy thử ở 4 độ sâu khác nhau
     
     print("="*85)
     print(f"{'Tên Trạng Thái':<18} | {'Độ sâu':<6} | {'Thuật toán':<10} | {'Số TT xét':<10} | {'Thời gian (s)':<15}")
