@@ -64,12 +64,23 @@ Nhờ việc tối ưu hóa **Transposition Table (Bộ nhớ đệm với cờ 
 2. **Transposition Table:** 
    - Mã hóa trạng thái bàn cờ siêu tốc ($O(N)$) và lưu các giá trị với cờ `EXACT`, `LOWER` và `UPPER`. Điều này ngăn việc AI duyệt lại các nhánh đã tính một cách toán học chuẩn xác.
 3. **Move Ordering:**
-   - Dùng kỹ thuật Ray Casting phát tia từ vị trí định đánh ra 4 hướng để đếm chuỗi.
-   - Nhận diện cực sớm các thế cờ nguy hiểm của địch (ví dụ: Địch có 3 quân $\rightarrow$ gán trọng số khẩn cấp $+5000$).
-   - AI sẽ luôn ưu tiên phòng thủ các nhánh chết người này đầu tiên, giúp lượng nhánh cắt tỉa tăng vọt.
+   - Dùng kỹ thuật Ray Casting phát tia từ vị trí định đánh ra 4 hướng để đếm chuỗi liên tiếp. Tùy vào độ dài chuỗi, hàm sẽ gán điểm ưu tiên cực cao:
+     - Chặn 3 quân địch: `+5000` điểm
+     - Nối 3 quân ta: `+4000` điểm
+     - Chặn 2 quân địch: `+500` điểm
+     - Nối 2 quân ta: `+400` điểm
+   - Bằng cách này, AI sẽ luôn ưu tiên phòng thủ các nhánh chết người này đầu tiên, giúp lượng nhánh cắt tỉa tăng vọt.
 
 ### Hàm Heuristic đánh giá
-Chương trình ứng dụng kỹ thuật *Sliding Window* 5 ô để phát hiện các thế cờ (Live 3, Dead 3, Open 2...). Điểm phạt phòng ngự luôn lớn hơn điểm thưởng tấn công, giúp AI thi đấu chắc chắn và luôn bẻ gãy đòn đánh của bạn trước.
+Chương trình ứng dụng kỹ thuật *Sliding Window* 5 ô để phát hiện và chấm điểm các thế cờ chiến thuật. Điểm phạt phòng ngự luôn lớn hơn điểm thưởng tấn công để đảm bảo AI ưu tiên bẻ gãy đòn tấn công của đối phương trước.
+
+| Trạng thái chuỗi (Window 5) | Điểm thưởng (AI) | Điểm phạt (Địch) |
+|-----------------------------|------------------|------------------|
+| 4 liên tiếp (Thắng)         | +100,000         | -100,000         |
+| 3 mở 2 đầu (Live 3)         | +20,000          | -30,000          |
+| 3 đóng 1 đầu (Dead 3)       | +10,000          | -15,000          |
+| 2 mở 2 đầu (Live 2)         | +500             | -5,000           |
+| 2 đóng 1 đầu (Dead 2)       | 0                | -2,000           |
 
 ---
 
