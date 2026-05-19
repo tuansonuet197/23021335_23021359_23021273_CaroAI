@@ -14,7 +14,7 @@ class GameUI:
         self.height = self.grid_width + self.margin * 2 + 80
         
         self.screen = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption("Caro AI Pro")
+        pygame.display.set_caption("Caro AI")
         
         # Colors
         self.BG_COLOR = (10, 10, 15)
@@ -51,7 +51,7 @@ class GameUI:
         self.screen.fill(self.BG_COLOR)
         
         # Title
-        title_surf = self.title_font.render("CARO AI PRO", True, self.TEXT_COLOR)
+        title_surf = self.title_font.render("CARO AI", True, self.TEXT_COLOR)
         self.screen.blit(title_surf, (self.width // 2 - title_surf.get_width() // 2, 20))
         
         # Background bàn cờ

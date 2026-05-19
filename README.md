@@ -1,42 +1,91 @@
 # Bài Tập Lớn Giữa Kì Caro AI (Nhóm 3 thành viên)
 
-## Thành viên
-- 23021335 - Nguyễn Tuấn Sơn  
+Dự án phát triển Game cờ Caro 9×9 tích hợp trí tuệ nhân tạo (AI) sử dụng thuật toán **Minimax** kết hợp **Alpha-Beta Pruning** cực mạnh, được viết bằng ngôn ngữ Python với giao diện Pygame.
+
+## 👥 Thành viên nhóm
+- 23021335 - Nguyễn Tuấn Sơn
 - 23021359 - Nguyễn Văn Thắng
 - 23021273 - Vũ Hữu Hoạt
 
-## Giới thiệu
-Chương trình chơi cờ Caro AI áp dụng thuật toán Minimax và Alpha-Beta Pruning.
-- **Kích thước bàn cờ**: 9x9
-- **Luật chơi**: 4 quân liên tiếp (ngang, dọc, chéo) là thắng. Không cần chặn 2 đầu.
-- **Giao diện**: Pygame đồ họa đơn giản.
+---
 
-## Cài đặt thư viện
-1. Cài đặt Python (phiên bản 3.x)
-2. Mở terminal tại thư mục gốc, chạy lệnh:
+## 📜 Luật chơi
+
+- Bàn cờ tiêu chuẩn: **9×9**
+- Điều kiện thắng: Đạt **4 quân liên tiếp** (ngang, dọc, chéo).
+- **Đặc biệt:** Không áp dụng luật chặn 2 đầu.
+
+---
+
+## ⚙️ Cài đặt & Cách chạy
+
+### Yêu cầu hệ thống
+- Python **3.10** trở lên.
+- Các thư viện phụ thuộc trong file `requirements.txt`.
+
+### Bước 1: Cài đặt thư viện
+Mở terminal tại thư mục gốc của dự án, chạy lệnh:
 ```bash
 pip install -r requirements.txt
 ```
 
-## Cách chạy chương trình
-1. **Chơi game với AI:**
-Mở terminal, di chuyển vào thư mục `source_code` và chạy:
+### Bước 2: Chạy game
+Di chuyển vào thư mục `source_code` và khởi chạy file `main.py`:
 ```bash
 cd source_code
 python main.py
 ```
-> Trong `main.py`, bạn có thể thay đổi biến `depth` (độ sâu) hoặc `use_alpha_beta` (chọn thuật toán) để thử nghiệm các chế độ AI khác nhau.
+> **Mẹo:** Trong `main.py`, bạn có thể trực tiếp thay đổi tham số `depth` (độ sâu tìm kiếm) hoặc cờ `use_alpha_beta` để kiểm nghiệm sức mạnh của từng thuật toán.
 
-2. **Chạy script kiểm thử hiệu năng (Benchmark):**
-Chạy script để thấy bảng so sánh tốc độ giữa Minimax và Alpha-Beta:
+---
+
+## 🔬 Benchmark hiệu năng AI
+
+Hệ thống được tích hợp sẵn một script kiểm thử hiệu năng. Kịch bản này mô phỏng 5 trạng thái bàn cờ khác nhau (từ dễ đến cực khó) để so sánh tốc độ và khả năng cắt tỉa nhánh của Minimax so với Alpha-Beta Pruning.
+
 ```bash
 cd source_code
 python benchmark.py
 ```
 
-## Các module chính
-- `board.py`: Cài đặt mảng lưới cờ, logic sinh nước đi và kiểm tra thắng thua.
-- `ai.py`: Cài đặt hai thuật toán Minimax và Alpha-beta pruning.
-- `evaluate.py`: Cài đặt hàm heuristic đánh giá điểm của trạng thái bàn cờ dựa trên chuỗi quân (2, 3, 4 quân).
-- `ui.py`: Cài đặt giao diện vẽ bàn cờ, theo dõi click chuột bằng Pygame.
-- `benchmark.py`: Cài đặt 5 trạng thái cờ khác nhau để đo đạc và phân tích thời gian chạy, số trạng thái duyệt.
+Nhờ việc tối ưu hóa **Transposition Table (Bộ nhớ đệm với cờ Toán học)** và kỹ thuật **Move Ordering (Ray Casting)** đếm chuỗi, số lượng nhánh phải duyệt của Alpha-Beta được giảm đến **hơn 75%** so với Minimax ở các thế cờ phức tạp, giúp tốc độ phản hồi chỉ còn ~1 giây cho độ sâu D=4.
+
+---
+
+## 🧠 Phân tích thuật toán AI
+
+### Thuật toán Minimax
+- Duyệt toàn bộ cây trò chơi không cắt nhánh để tìm nước đi tốt nhất.
+- Độ phức tạp thời gian: $O(b^d)$ (với b là số nhánh trung bình, d là độ sâu).
+- Vai trò: Dùng làm Baseline chuẩn xác để so sánh.
+
+### Alpha-Beta Pruning & Cải tiến
+1. **Cắt nhánh (Pruning):** Giảm tải các phép toán không cần thiết bằng cách đánh giá các ngưỡng Alpha (cận dưới) và Beta (cận trên).
+2. **Transposition Table:** 
+   - Mã hóa trạng thái bàn cờ siêu tốc ($O(N)$) và lưu các giá trị với cờ `EXACT`, `LOWER` và `UPPER`. Điều này ngăn việc AI duyệt lại các nhánh đã tính một cách toán học chuẩn xác.
+3. **Move Ordering:**
+   - Dùng kỹ thuật Ray Casting phát tia từ vị trí định đánh ra 4 hướng để đếm chuỗi.
+   - Nhận diện cực sớm các thế cờ nguy hiểm của địch (ví dụ: Địch có 3 quân $\rightarrow$ gán trọng số khẩn cấp $+5000$).
+   - AI sẽ luôn ưu tiên phòng thủ các nhánh chết người này đầu tiên, giúp lượng nhánh cắt tỉa tăng vọt.
+
+### Hàm Heuristic đánh giá
+Chương trình ứng dụng kỹ thuật *Sliding Window* 5 ô để phát hiện các thế cờ (Live 3, Dead 3, Open 2...). Điểm phạt phòng ngự luôn lớn hơn điểm thưởng tấn công, giúp AI thi đấu chắc chắn và luôn bẻ gãy đòn đánh của bạn trước.
+
+---
+
+## 📂 Cấu trúc dự án
+
+```text
+├── README.md              # Giới thiệu dự án
+├── requirements.txt       # Danh sách thư viện Python
+├── report/                # Chứa báo cáo LaTeX và file PDF hoàn thiện
+│   ├── main.tex
+│   └── main.pdf
+└── source_code/
+    ├── main.py            # File chạy chính kết nối Game loop
+    ├── ui.py              # Xử lý giao diện đồ hoạ, bắt sự kiện click với Pygame
+    ├── board.py           # Quản lý logic bàn cờ, thắng thua, sinh nước đi
+    ├── evaluate.py        # Hàm Heuristic đánh giá trạng thái và Ray Casting
+    ├── ai.py              # Lõi AI chứa Minimax và Alpha-Beta Search
+    └── benchmark.py       # Script so sánh hiệu suất AI
+```

@@ -73,25 +73,52 @@ class Evaluator:
     def score_move_quick(board, r, c, p):
         """
         Sắp xếp nước đi (Move Ordering) cực mạnh.
-        Ưu tiên các ô tạo ra hoặc chặn đứng các chuỗi liên tiếp.
+        Mô phỏng đếm chuỗi (run length) trên các tia để nhận diện đe dọa lớn mà không cần make_move.
         """
         score = 0
         size = board.size
         grid = board.grid
         o = 1 if p == 2 else 2
         
-        # 1. Ưu tiên gần tâm bàn cờ
-        center = size // 2
-        score += (center - abs(r - center) - abs(c - center))
+        # 1. Điểm ưu tiên vị trí trung tâm (tie-breaker)
+        center = size / 2.0
+        score -= (abs(r - center) + abs(c - center)) * 0.1
         
-        # 2. Ưu tiên các ô có quân xung quanh (bán kính 1)
+        # 2. Quét 4 hướng để đếm chuỗi liên tục
         directions = [(0, 1), (1, 0), (1, 1), (1, -1)]
         for dr, dc in directions:
+            p_run = 0
+            o_run = 0
+            
             for step in [1, -1]:
-                nr, nc = r + dr * step, c + dc * step
-                if 0 <= nr < size and 0 <= nc < size:
-                    val = grid[nr][nc]
-                    if val == o: score += 100 # Chặn địch là ưu tiên 1
-                    elif val == p: score += 80 # Nối quân mình là ưu tiên 2
+                # Đếm chuỗi quân mình
+                nr, nc = r + step*dr, c + step*dc
+                while 0 <= nr < size and 0 <= nc < size:
+                    if grid[nr][nc] == p:
+                        p_run += 1
+                        nr += step*dr
+                        nc += step*dc
+                    else:
+                        break
+                        
+                # Đếm chuỗi quân địch
+                nr, nc = r + step*dr, c + step*dc
+                while 0 <= nr < size and 0 <= nc < size:
+                    if grid[nr][nc] == o:
+                        o_run += 1
+                        nr += step*dr
+                        nc += step*dc
+                    else:
+                        break
+            
+            # Ưu tiên phòng thủ: chặn địch có chuỗi dài
+            if o_run >= 3: score += 5000 # Địch có 3 quân -> BẮT BUỘC CHẶN
+            elif o_run == 2: score += 500
+            elif o_run == 1: score += 50
+            
+            # Ưu tiên tấn công: nối dài chuỗi quân ta
+            if p_run >= 3: score += 4000
+            elif p_run == 2: score += 400
+            elif p_run == 1: score += 40
                     
         return score

@@ -104,10 +104,17 @@ class AI:
             return min_val, best_move
 
     def alpha_beta_search(self, board, depth, alpha, beta, is_maximizing):
-        # Kiểm tra trạng thái trong bộ nhớ đệm
-        state_key = (tuple(map(tuple, board.grid)), depth, is_maximizing)
+        # Nâng cấp: Tối ưu Transposition Table với các cờ EXACT, LOWER, UPPER
+        # EXACT = 0, LOWER = 1 (cắt tỉa Beta), UPPER = 2 (không vượt qua Alpha)
+        state_key = (str(board.grid), is_maximizing)
+        
         if state_key in self.memo:
-            return self.memo[state_key]
+            val, d, flag, m = self.memo[state_key]
+            if d >= depth:
+                if flag == 0: return val, m
+                if flag == 1: alpha = max(alpha, val)
+                if flag == 2: beta = min(beta, val)
+                if alpha >= beta: return val, m
 
         self.states_evaluated += 1
         winner = board.check_winner(win_count=4)
@@ -115,6 +122,7 @@ class AI:
             if winner == self.ai_player: return 100000 + depth, None
             if winner == self.human_player: return -100000 - depth, None
             return 0, None
+            
         if depth == 0:
             return Evaluator.evaluate_state(board, self.ai_player), None
 
@@ -123,30 +131,44 @@ class AI:
 
         valid_moves.sort(key=lambda m: Evaluator.score_move_quick(board, m[0], m[1], self.ai_player if is_maximizing else self.human_player), reverse=True)
 
+        orig_alpha = alpha
+        orig_beta = beta
         best_move = valid_moves[0]
+        
         if is_maximizing:
             max_val = -float('inf')
-            for r, c in valid_moves[:30]: # Alpha-Beta có thể duyệt nhiều nước hơn
+            for r, c in valid_moves[:30]:
                 board.make_move(r, c, self.ai_player)
                 val, _ = self.alpha_beta_search(board, depth - 1, alpha, beta, False)
                 board.undo_move(r, c, self.ai_player)
+                
                 if val > max_val:
                     max_val = val
                     best_move = (r, c)
                 alpha = max(alpha, val)
                 if beta <= alpha: break
-            self.memo[state_key] = (max_val, best_move)
+                
+            flag = 0
+            if max_val <= orig_alpha: flag = 2 # UPPER
+            elif max_val >= orig_beta: flag = 1 # LOWER
+            self.memo[state_key] = (max_val, depth, flag, best_move)
             return max_val, best_move
+            
         else:
             min_val = float('inf')
             for r, c in valid_moves[:30]:
                 board.make_move(r, c, self.human_player)
                 val, _ = self.alpha_beta_search(board, depth - 1, alpha, beta, True)
                 board.undo_move(r, c, self.human_player)
+                
                 if val < min_val:
                     min_val = val
                     best_move = (r, c)
                 beta = min(beta, val)
                 if beta <= alpha: break
-            self.memo[state_key] = (min_val, best_move)
+                
+            flag = 0
+            if min_val <= orig_alpha: flag = 2 # UPPER
+            elif min_val >= orig_beta: flag = 1 # LOWER
+            self.memo[state_key] = (min_val, depth, flag, best_move)
             return min_val, best_move
