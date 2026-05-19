@@ -17,7 +17,7 @@ Dự án phát triển Game cờ Caro 9×9 tích hợp trí tuệ nhân tạo (A
 
 ---
 
-## ⚙️ Cài đặt & Cách chạy
+##  Cài đặt & Cách chạy
 
 ### Yêu cầu hệ thống
 - Python **3.10** trở lên.
@@ -39,7 +39,7 @@ python main.py
 
 ---
 
-## 🔬 Benchmark hiệu năng AI
+##  Benchmark hiệu năng AI
 
 Hệ thống được tích hợp sẵn một script kiểm thử hiệu năng. Kịch bản này mô phỏng 5 trạng thái bàn cờ khác nhau (từ dễ đến cực khó) để so sánh tốc độ và khả năng cắt tỉa nhánh của Minimax so với Alpha-Beta Pruning.
 
