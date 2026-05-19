@@ -29,12 +29,25 @@ Mở terminal tại thư mục gốc của dự án, chạy lệnh:
 pip install -r requirements.txt
 ```
 
-### Bước 2: Chạy game
-Di chuyển vào thư mục `source_code` và khởi chạy file `main.py`:
-```bash
-cd source_code
+### Bước 2: Chạy game (Chọn 1 trong 2 cách)
+
+#### Cách 1: Sử dụng file chạy nhanh (Khuyên dùng trên Windows)
+- Nhấn đúp chuột trực tiếp vào file **`PlayCaro.exe`** ở thư mục gốc của dự án để khởi chạy game ngay lập tức mà không cần gõ lệnh.
+
+#### Cách 2: Sử dụng dòng lệnh (Terminal)
+Nếu bạn muốn chạy thủ công bằng dòng lệnh, hãy mở Terminal/Command Prompt và chạy các lệnh sau:
+- Chuyển đúng ổ đĩa và thư mục trước khi chạy:
+```cmd
+d:
+cd "d:\WORKING PLACE\Antigravity\23021335_mssv2_mssv3_CaroAI\source_code"
 python main.py
 ```
+- Hoặc sử dụng cờ chuyển đổi ổ đĩa `/d`:
+```cmd
+cd /d "d:\WORKING PLACE\Antigravity\23021335_mssv2_mssv3_CaroAI\source_code"
+python main.py
+```
+
 > **Mẹo:** Trong `main.py`, bạn có thể trực tiếp thay đổi tham số `depth` (độ sâu tìm kiếm) hoặc cờ `use_alpha_beta` để kiểm nghiệm sức mạnh của từng thuật toán.
 
 ---
@@ -43,8 +56,9 @@ python main.py
 
 Hệ thống được tích hợp sẵn một script kiểm thử hiệu năng. Kịch bản này mô phỏng 5 trạng thái bàn cờ khác nhau (từ dễ đến cực khó) để so sánh tốc độ và khả năng cắt tỉa nhánh của Minimax so với Alpha-Beta Pruning.
 
-```bash
-cd source_code
+Chạy thử nghiệm bằng cách gõ:
+```cmd
+cd /d "d:\WORKING PLACE\Antigravity\23021335_mssv2_mssv3_CaroAI\source_code"
 python benchmark.py
 ```
 
@@ -89,6 +103,7 @@ Chương trình ứng dụng kỹ thuật *Sliding Window* 5 ô để phát hi�
 ```text
 ├── README.md              # Giới thiệu dự án
 ├── requirements.txt       # Danh sách thư viện Python
+├── PlayCaro.exe           # Ứng dụng chạy game nhanh bằng 1 click trên Windows
 ├── report/                # Chứa báo cáo LaTeX và file PDF hoàn thiện
 │   ├── main.tex
 │   └── main.pdf
