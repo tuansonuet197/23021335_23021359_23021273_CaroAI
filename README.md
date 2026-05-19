@@ -1,6 +1,6 @@
 # Bài Tập Lớn Giữa Kì Caro AI (Nhóm 3 thành viên)
 
-Dự án phát triển Game cờ Caro 9×9 tích hợp trí tuệ nhân tạo (AI) sử dụng thuật toán **Minimax** kết hợp **Alpha-Beta Pruning** cực mạnh, được viết bằng ngôn ngữ Python với giao diện Pygame.
+Dự án phát triển Game cờ Caro 9×9 tích hợp trí tuệ nhân tạo (AI) sử dụng thuật toán **Minimax** kết hợp **Alpha-Beta Pruning** , được viết bằng ngôn ngữ Python với giao diện Pygame.
 
 ##  Thành viên nhóm
 - 23021335 - Nguyễn Tuấn Sơn
