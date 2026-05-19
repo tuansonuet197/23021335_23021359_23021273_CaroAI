@@ -2,14 +2,14 @@
 
 Dự án phát triển Game cờ Caro 9×9 tích hợp trí tuệ nhân tạo (AI) sử dụng thuật toán **Minimax** kết hợp **Alpha-Beta Pruning** cực mạnh, được viết bằng ngôn ngữ Python với giao diện Pygame.
 
-## 👥 Thành viên nhóm
+##  Thành viên nhóm
 - 23021335 - Nguyễn Tuấn Sơn
 - 23021359 - Nguyễn Văn Thắng
 - 23021273 - Vũ Hữu Hoạt
 
 ---
 
-## 📜 Luật chơi
+##  Luật chơi
 
 - Bàn cờ tiêu chuẩn: **9×9**
 - Điều kiện thắng: Đạt **4 quân liên tiếp** (ngang, dọc, chéo).
@@ -52,7 +52,7 @@ Nhờ việc tối ưu hóa **Transposition Table (Bộ nhớ đệm với cờ 
 
 ---
 
-## 🧠 Phân tích thuật toán AI
+##  Phân tích thuật toán AI
 
 ### Thuật toán Minimax
 - Duyệt toàn bộ cây trò chơi không cắt nhánh để tìm nước đi tốt nhất.
@@ -73,7 +73,7 @@ Chương trình ứng dụng kỹ thuật *Sliding Window* 5 ô để phát hi�
 
 ---
 
-## 📂 Cấu trúc dự án
+##  Cấu trúc dự án
 
 ```text
 ├── README.md              # Giới thiệu dự án
