@@ -62,7 +62,7 @@ Nhờ việc tối ưu hóa **Transposition Table (Bộ nhớ đệm với cờ 
 ### Alpha-Beta Pruning & Cải tiến
 1. **Cắt nhánh (Pruning):** Giảm tải các phép toán không cần thiết bằng cách đánh giá các ngưỡng Alpha (cận dưới) và Beta (cận trên).
 2. **Transposition Table:** 
-   - Mã hóa trạng thái bàn cờ siêu tốc ($O(N)$) và lưu các giá trị với cờ `EXACT`, `LOWER` và `UPPER`. Điều này ngăn việc AI duyệt lại các nhánh đã tính một cách toán học chuẩn xác.
+   - Mã hóa trạng thái bàn cờ siêu tốc (độ phức tạp O(N)) và lưu các giá trị với cờ `EXACT`, `LOWER` và `UPPER`. Điều này ngăn việc AI duyệt lại các nhánh đã tính một cách toán học chuẩn xác.
 3. **Move Ordering:**
    - Dùng kỹ thuật Ray Casting phát tia từ vị trí định đánh ra 4 hướng để đếm chuỗi liên tiếp. Tùy vào độ dài chuỗi, hàm sẽ gán điểm ưu tiên cực cao:
      - Chặn 3 quân địch: `+5000` điểm
